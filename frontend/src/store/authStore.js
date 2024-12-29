@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL =
+  import.meta.env.NODE === "development"
+    ? "http://localhost:5000/api/auth"
+    : "/api/auth";
 
 axios.defaults.withCredentials = true;
 
@@ -51,15 +54,17 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  checkAuth:async()=>{
-    set({isCheckingAuth:true,error:null})
+  checkAuth: async () => {
+    set({ isCheckingAuth: true, error: null });
     try {
-      const response = await axios.get(`${API_URL}/check-auth`)
-      set({user:response.data.user,isAuthenticated:true,isCheckingAuth:false})
-
+      const response = await axios.get(`${API_URL}/check-auth`);
+      set({
+        user: response.data.user,
+        isAuthenticated: true,
+        isCheckingAuth: false,
+      });
     } catch (error) {
-      set({isCheckingAuth:false,error:null})
-      
+      set({ isCheckingAuth: false, error: null });
     }
   },
   signin: async (email, password) => {
@@ -67,7 +72,7 @@ export const useAuthStore = create((set) => ({
     try {
       const response = await axios.post(`${API_URL}/signin`, {
         email,
-        password
+        password,
       });
       set({
         user: response.data.user,
@@ -82,35 +87,31 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  signout:async()=>{
-    set({isLoading:true,error:null})
+  signout: async () => {
+    set({ isLoading: true, error: null });
     try {
-      await axios.post(`${API_URL}/signout`)
-      set({user:null,isAuthenticated:false,isLoading:false})
+      await axios.post(`${API_URL}/signout`);
+      set({ user: null, isAuthenticated: false, isLoading: false });
     } catch (error) {
-      set({error:error.response.data.error,isLoading:false})
-      
+      set({ error: error.response.data.error, isLoading: false });
     }
   },
-  forgotPassword:async(email)=>{
-    set({isLoading:true,error:null})
+  forgotPassword: async (email) => {
+    set({ isLoading: true, error: null });
     try {
-      await axios.post(`${API_URL}/forgot-password`,{email})
-      set({isLoading:false})
+      await axios.post(`${API_URL}/forgot-password`, { email });
+      set({ isLoading: false });
     } catch (error) {
-      set({error:error.response.data.message,isLoading:false})
-      
+      set({ error: error.response.data.message, isLoading: false });
     }
   },
-  resetPassword:async(token,password)=>{
-    set({isLoading:true,error:null})
+  resetPassword: async (token, password) => {
+    set({ isLoading: true, error: null });
     try {
-      await axios.post(`${API_URL}/reset-password/${token}`,{password})
-      set({isLoading:false})
+      await axios.post(`${API_URL}/reset-password/${token}`, { password });
+      set({ isLoading: false });
     } catch (error) {
-      set({error:error.response.data.message,isLoading:false})
-      
+      set({ error: error.response.data.message, isLoading: false });
     }
-  }
-
+  },
 }));

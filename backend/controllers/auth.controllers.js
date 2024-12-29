@@ -135,7 +135,7 @@ export const forgotPassword = async (req, res) => {
     user.verificationToken = resetToken;
     user.verificationTokenExpires = resetTokenExpires;
     await user.save();
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetURL = `${CLIENT_URL}/${resetToken}`;
     await sendPasswordResetEmail(user.email, resetURL);
     res.status(200).json({ message: "Reset password link sent to your email" });
   } catch (error) {
